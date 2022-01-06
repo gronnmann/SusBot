@@ -30,6 +30,7 @@ AmongUsLocation|(location to Among Us directory here)
 DiscordToken|(Discord Bot token you got in Step 1)
 ```
 Save the file, and make sure it's in the same directory as SusBot_Discord.exe.
+
 4. Open the command line, and navigate to the folder. Launch the bot using SusBot_Discord.exe
 
 Alternate Step 3:
