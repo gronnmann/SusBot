@@ -1,6 +1,6 @@
 # SusBot
 
-![Showcase of bot](https://gfycat.com/glaringfoolhardyarabianhorse.gif)
+![Showcase of bot](https://github.com/gronnmann/SusBot/raw/master/SusBot.gif)
 
 Bot for automatic deafening of players during the round in the game Among Us. Keep in mind it's my first C# project, so it might contain a lot of bugs. Consists of two modules, both needed for the operation.
 You should install AmongUs Module first, and then Discord Module.
