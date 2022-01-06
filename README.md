@@ -55,5 +55,5 @@ This binds the bot to your server, and makes it start working. When done playing
 ```
 sus!stop
 ```
-
+Alternatively, you can just exit the program. Note the Among Us Nick - Discord user links will then be gone.
 
