@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SusBot_Mod", "SusBot_Mod\SusBot_Mod.csproj", "{232B20F4-2A4F-456F-AC6D-BC5384071FB5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SusBot_Discord", "SusBot_Discord\SusBot_Discord.csproj", "{45823674-EE61-48B1-B8B5-712FBF216C48}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{232B20F4-2A4F-456F-AC6D-BC5384071FB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{232B20F4-2A4F-456F-AC6D-BC5384071FB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{232B20F4-2A4F-456F-AC6D-BC5384071FB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{232B20F4-2A4F-456F-AC6D-BC5384071FB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45823674-EE61-48B1-B8B5-712FBF216C48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45823674-EE61-48B1-B8B5-712FBF216C48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45823674-EE61-48B1-B8B5-712FBF216C48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45823674-EE61-48B1-B8B5-712FBF216C48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45823674-EE61-48B1-B8B5-712FBF216C48}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+	EndGlobalSection
+EndGlobal
