@@ -25,17 +25,6 @@ namespace SusBot_Discord
         public bool IsMeeting = false;
         public bool IsStarted = false;
 
-        /*
-         * TODO:
-         *  - clean up code
-         *  - use voice channel not guild
-         *  - use proper naming conventions
-         *  - make different logs for program and discord bot
-         *  - use command line args to get among us location, find files there
-         *  - fix file names
-         *  - publish
-         *  - maybe split into two classes??
-         */
 
 
         public static async Task Main(string[] args)
