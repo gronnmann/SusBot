@@ -12,9 +12,9 @@ namespace SusBot_Discord
         private static string _token;
         public static SusDiscord Instance;
 
-        private readonly Dictionary<string, ulong> _discordLinks = new Dictionary<string, ulong>();
+        internal readonly Dictionary<string, ulong> _discordLinks = new Dictionary<string, ulong>();
 
-        private readonly List<ulong> muted = new List<ulong>();
+        private readonly List<ulong> voiceModified = new List<ulong>();
 
         private SocketGuild _channel;
         private DiscordSocketClient _client;
@@ -31,8 +31,7 @@ namespace SusBot_Discord
         {
             Instance = new SusDiscord();
             Instance._fileManager = new SusFileManager(Instance);
-
-
+            
 
             if (!Instance._fileManager.CheckForConfig(ref _token))
             {
@@ -53,8 +52,15 @@ namespace SusBot_Discord
         {
             //Start file scanning
             _fileManager.UpdateStates();
+            _fileManager.LoadPreviousLinks();
 
+            StartDiscord();
 
+            await Task.Delay(-1);
+        }
+
+        private async Task StartDiscord()
+        {
             //Make bot instance and start logging
             _client = new DiscordSocketClient();
             _client.Log += LogDiscord;
@@ -73,8 +79,9 @@ namespace SusBot_Discord
 
 
             _client.MessageReceived += MessageReceived;
-
-            await Task.Delay(-1);
+            
+            
+            await StateChange();
         }
 
 
@@ -102,6 +109,9 @@ namespace SusBot_Discord
                 }
 
                 _channel = channel.Guild;
+
+                StateChange();
+                
                 e.Channel.SendMessageAsync($"Starting bot in {_channel.Name}");
 
                 LogMod("Watching guild: " + _channel.Name);
@@ -123,8 +133,13 @@ namespace SusBot_Discord
             else if (args[0].Equals("sus!stop"))
             {
                 e.Channel.SendMessageAsync("Stopping bot");
-                await UndeafAll();
+                await UnVoiceModifyAll();
                 _channel = null;
+            }
+            else if (args[0].Equals("sus!savelinks"))
+            {
+                _fileManager.SaveLinks();
+                e.Channel.SendMessageAsync("Saved all links.");
             }
         }
 
@@ -141,45 +156,83 @@ namespace SusBot_Discord
 
             if (IsConnected && IsStarted)
             {
-                if (IsMeeting)
-                    UndeafAll();
-                else
-                    foreach (var player in _fileManager.PlayerStates)
+                
+                foreach (var player in _fileManager.PlayerStates)
+                {
+                    if (!_discordLinks.ContainsKey(player.Key)) continue;
+
+                    var discId = _discordLinks[player.Key];
+
+                    if (IsMeeting)
                     {
-                        if (!_discordLinks.ContainsKey(player.Key)) continue;
-
-                        var discId = _discordLinks[player.Key];
-
-                        if (!player.Value) SetPlayerDeaf(discId, true);
-
-                        LogMod("State: " + player.Key + " : " + (player.Value ? "dead" : "alive") + " (disc id: " +
-                               discId + ")");
+                        switch (player.Value)
+                        {
+                            case true:
+                                await SetPlayerVoiceState(discId, false, true);
+                                break;
+                            case false:
+                                await SetPlayerVoiceState(discId, false, false);
+                                break;
+                        }
                     }
+                    else
+                    {
+                        switch (player.Value)
+                        {
+                            case true:
+                                await SetPlayerVoiceState(discId, false, false);
+                                break;
+                            case false:
+                                await SetPlayerVoiceState(discId, true, false);
+                                break;
+                        }
+                    }
+                    
+                    //if (!player.Value) SetPlayerVoiceState(discId, true, false);
+                    //LogMod("State: " + player.Key + " : " + (player.Value ? "dead" : "alive") + " (disc id: " +
+                     //      discId + ")");
+                }
             }
             else
             {
-                UndeafAll();
+                UnVoiceModifyAll();
             }
         }
 
 
-        private async Task SetPlayerDeaf(ulong id, bool deaf)
+        private async Task SetPlayerVoiceState(ulong id, bool deaf, bool muted)
         {
-            LogMod("Deafening: " + id + " (deaf: " + deaf + ")");
-            await _channel.GetUser(id).ModifyAsync(props => props.Deaf = deaf);
-            if (deaf)
-                muted.Add(id);
+
+            SocketGuildUser user = _channel.GetUser(id);
+
+            if (user == null) return;
+            
+            LogMod($"Setting voice state: {user.Username}#{user.Discriminator}: deaf: {deaf}, muted: {muted}");
+            await _channel.GetUser(id).ModifyAsync(props =>
+            {
+                props.Deaf = deaf;
+                props.Mute = muted;
+            });
+            if (deaf || muted)
+            {
+                if (!voiceModified.Contains(id))
+                {
+                    voiceModified.Add(id);
+                }
+            }
             else
-                muted.Remove(id);
+            {
+                voiceModified.Remove(id);
+            }
         }
 
-        private async Task UndeafAll()
+        private async Task UnVoiceModifyAll()
         {
             LogMod("Unmuting all...");
-            foreach (var p in muted.ToList())
+            foreach (var p in voiceModified.ToList())
             {
-                await SetPlayerDeaf(p, false);
-                muted.Remove(p);
+                await SetPlayerVoiceState(p, false, false);
+                voiceModified.Remove(p);
             }
         }
 

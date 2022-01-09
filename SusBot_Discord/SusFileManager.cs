@@ -7,26 +7,59 @@ namespace SusBot_Discord
 {
     public class SusFileManager
     {
-        private static string configFileName = "SusBot_Discord.txt";
+        private static readonly string configFileName = "SusBot_Discord.txt";
+        private static readonly string linksFileName = "SusBot_Discord_Links.txt";
         
-        private readonly SusDiscord modInstance;
-        private string gamestateLocation = "";
-        private string playerStateLocation = "";
+        private readonly SusDiscord _modInstance;
+        private string _gamestateLocation = "";
+        private string _playerStateLocation = "";
 
 
         public Dictionary<string, bool> PlayerStates = new Dictionary<string, bool>();
 
         internal SusFileManager(SusDiscord modInstance)
         {
-            this.modInstance = modInstance;
+            this._modInstance = modInstance;
         }
 
+        internal bool LoadPreviousLinks()
+        {
+            if (!File.Exists(linksFileName)) return false;
+            
+            _modInstance.LogMod("Links file found. Attempting to load.");
 
+            foreach (var line in File.ReadAllLines(linksFileName))
+            {
+                var split = line.Split(':');
+                if (split.Length != 2) return false;
+                ulong discId = 0;
+                if (!ulong.TryParse(split[1], out discId)) continue;
+                _modInstance._discordLinks[split[0]] = discId;
+                _modInstance.LogMod($"Loaded link: {split[0]} - {discId}");
+            }
+
+            return true;
+        }
+
+        internal void SaveLinks()
+        {
+            using (var file = new StreamWriter(linksFileName))
+            {
+                foreach (var state in _modInstance._discordLinks)
+                {
+                    if (state.Key.Contains(":")) continue;
+                    file.WriteLineAsync(state.Key + ":" + state.Value);
+                    _modInstance.LogMod($"Saving link: {state.Key} - {state.Value}");
+                }
+            }
+        }
+        
+        
         internal bool CheckForConfig(ref string tokenString)
         {
             if (!File.Exists(configFileName)) return false;
 
-            modInstance.LogMod("Config file found. Attempting to load.");
+            _modInstance.LogMod("Config file found. Attempting to load.");
             
             string gameDirLoc = "";
             int found = 0;
@@ -48,7 +81,7 @@ namespace SusBot_Discord
 
             if (found != 2)
             {
-                modInstance.LogMod("Could not load config.");
+                _modInstance.LogMod("Could not load config.");
                 return false;
             }
 
@@ -58,20 +91,20 @@ namespace SusBot_Discord
         
         internal bool LoadFiles(string gameDirectory)
         {
-            modInstance.LogMod("Using Game Directory: " + gameDirectory);
+            _modInstance.LogMod("Using Game Directory: " + gameDirectory);
 
             if (!File.Exists(gameDirectory + "\\Among Us.exe"))
             {
-                modInstance.LogMod("No Among Us executable found at address. Exiting.");
+                _modInstance.LogMod("No Among Us executable found at address. Exiting.");
                 return false;
             }
 
-            gamestateLocation = gameDirectory + "\\SusBot_gameStates.txt";
-            playerStateLocation = gameDirectory + "\\SusBot_playerStates.txt";
+            _gamestateLocation = gameDirectory + "\\SusBot_gameStates.txt";
+            _playerStateLocation = gameDirectory + "\\SusBot_playerStates.txt";
 
-            while (!File.Exists(playerStateLocation) || !File.Exists(gamestateLocation))
+            while (!File.Exists(_playerStateLocation) || !File.Exists(_gamestateLocation))
             {
-                modInstance.LogMod(
+                _modInstance.LogMod(
                     "No game OR player state files found. Please check if Mod is running and press any key to check again.");
                 Console.ReadKey();
             }
@@ -85,9 +118,9 @@ namespace SusBot_Discord
         {
             while (true)
             {
-                PlayerStates = linesFromFile(playerStateLocation);
+                PlayerStates = linesFromFile(_playerStateLocation);
 
-                var tempGameStates = linesFromFile(gamestateLocation);
+                var tempGameStates = linesFromFile(_gamestateLocation);
 
 
                 if (tempGameStates["connectedState"] != SusDiscord.Instance.IsConnected)
