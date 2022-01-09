@@ -58,3 +58,9 @@ sus!stop
 ```
 Alternatively, you can just exit the program. Note the Among Us Nick - Discord user links will then be gone.
 
+###### Bot commands
+Other than the commands mentioned under Launching of bot, those commands are available:
+```
+sus!savelinks
+```
+Saves links between discord users and Among Us nicknames for future use. Those will be loaded on the next start.
