@@ -12,18 +12,18 @@ namespace SusBot_Discord
         private static string _token;
         public static SusDiscord Instance;
 
-        internal readonly Dictionary<string, ulong> _discordLinks = new Dictionary<string, ulong>();
+        internal readonly Dictionary<string, ulong> DiscordLinks = new Dictionary<string, ulong>();
 
-        private readonly List<ulong> voiceModified = new List<ulong>();
+        private readonly List<ulong> _voiceModified = new List<ulong>();
 
         private SocketGuild _channel;
         private DiscordSocketClient _client;
 
         private SusFileManager _fileManager;
 
-        public bool IsConnected = false;
-        public bool IsMeeting = false;
-        public bool IsStarted = false;
+        internal bool IsConnected = false;
+        internal bool IsMeeting = false;
+        internal bool IsStarted = false;
 
 
 
@@ -124,7 +124,7 @@ namespace SusBot_Discord
                     return;
                 }
 
-                _discordLinks[args[1]] = user.Id;
+                DiscordLinks[args[1]] = user.Id;
 
                 var linkMsg = $"Created link {user.Username}#{user.Discriminator} ({user.Id}) - {args[1]}";
                 e.Channel.SendMessageAsync(linkMsg);
@@ -159,9 +159,9 @@ namespace SusBot_Discord
                 
                 foreach (var player in _fileManager.PlayerStates)
                 {
-                    if (!_discordLinks.ContainsKey(player.Key)) continue;
+                    if (!DiscordLinks.ContainsKey(player.Key)) continue;
 
-                    var discId = _discordLinks[player.Key];
+                    var discId = DiscordLinks[player.Key];
 
                     if (IsMeeting)
                     {
@@ -215,24 +215,24 @@ namespace SusBot_Discord
             });
             if (deaf || muted)
             {
-                if (!voiceModified.Contains(id))
+                if (!_voiceModified.Contains(id))
                 {
-                    voiceModified.Add(id);
+                    _voiceModified.Add(id);
                 }
             }
             else
             {
-                voiceModified.Remove(id);
+                _voiceModified.Remove(id);
             }
         }
 
         private async Task UnVoiceModifyAll()
         {
             LogMod("Unmuting all...");
-            foreach (var p in voiceModified.ToList())
+            foreach (var p in _voiceModified.ToList())
             {
                 await SetPlayerVoiceState(p, false, false);
-                voiceModified.Remove(p);
+                _voiceModified.Remove(p);
             }
         }
 

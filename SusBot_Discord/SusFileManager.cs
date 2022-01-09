@@ -7,9 +7,9 @@ namespace SusBot_Discord
 {
     public class SusFileManager
     {
-        private static readonly string configFileName = "SusBot_Discord.txt";
-        private static readonly string linksFileName = "SusBot_Discord_Links.txt";
-        
+        private const string ConfigFileName = "SusBot_Discord.txt";
+        private const string LinksFileName = "SusBot_Discord_Links.txt";
+
         private readonly SusDiscord _modInstance;
         private string _gamestateLocation = "";
         private string _playerStateLocation = "";
@@ -24,17 +24,17 @@ namespace SusBot_Discord
 
         internal bool LoadPreviousLinks()
         {
-            if (!File.Exists(linksFileName)) return false;
+            if (!File.Exists(LinksFileName)) return false;
             
             _modInstance.LogMod("Links file found. Attempting to load.");
 
-            foreach (var line in File.ReadAllLines(linksFileName))
+            foreach (var line in File.ReadAllLines(LinksFileName))
             {
                 var split = line.Split(':');
                 if (split.Length != 2) return false;
                 ulong discId = 0;
                 if (!ulong.TryParse(split[1], out discId)) continue;
-                _modInstance._discordLinks[split[0]] = discId;
+                _modInstance.DiscordLinks[split[0]] = discId;
                 _modInstance.LogMod($"Loaded link: {split[0]} - {discId}");
             }
 
@@ -43,9 +43,9 @@ namespace SusBot_Discord
 
         internal void SaveLinks()
         {
-            using (var file = new StreamWriter(linksFileName))
+            using (var file = new StreamWriter(LinksFileName))
             {
-                foreach (var state in _modInstance._discordLinks)
+                foreach (var state in _modInstance.DiscordLinks)
                 {
                     if (state.Key.Contains(":")) continue;
                     file.WriteLineAsync(state.Key + ":" + state.Value);
@@ -57,13 +57,13 @@ namespace SusBot_Discord
         
         internal bool CheckForConfig(ref string tokenString)
         {
-            if (!File.Exists(configFileName)) return false;
+            if (!File.Exists(ConfigFileName)) return false;
 
             _modInstance.LogMod("Config file found. Attempting to load.");
             
             string gameDirLoc = "";
             int found = 0;
-            foreach (var line in File.ReadAllLines(configFileName))
+            foreach (var line in File.ReadAllLines(ConfigFileName))
             {
                 var split = line.Split('|');
                 if (split.Length != 2) return false;
