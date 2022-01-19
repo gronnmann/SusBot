@@ -81,11 +81,12 @@ namespace SusBot_Mod
             {
                 var data = p.Data;
 
+                string name = data.PlayerName;
+                
                 //Either voted off or really dead
-                var dead = p.name == _lastExiledPlayer || data.IsDead;
-
-
-                _playerStates[p.name] = dead;
+                var dead = name == _lastExiledPlayer || data.IsDead;
+                
+                _playerStates[name] = dead;
 
                 //LoggerInstance.Msg("Player: " + p.name + ", dead: " + dead);
             }

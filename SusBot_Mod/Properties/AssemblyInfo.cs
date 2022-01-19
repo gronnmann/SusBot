@@ -35,7 +35,7 @@ using SusBot_Mod;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.2.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: MelonInfo(typeof(SusMod), "SusBotMod", "1.0", "gronnmann")]
 [assembly: MelonGame("Innersloth", "Among Us")]
