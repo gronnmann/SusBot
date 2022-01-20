@@ -31,10 +31,10 @@ DiscordToken|(Discord Bot token you got in Step 1)
 ```
 Save the file, and make sure it's in the same directory as SusBot_Discord.exe.
 
-4. Open the command line, and navigate to the folder. Launch the bot using SusBot_Discord.exe
+4. Launch the bot starting using SusBot_Discord.exe
 
 Alternate Step 3:
-Instead of creating the text file, you can also launch the bot using the command:
+Instead of creating the text file, you can also launch the bot using the command (in the commandline):
 ```
 SusBot_Discord.exe [Among Us directory] [Discord Token]
 ```
@@ -58,3 +58,9 @@ sus!stop
 ```
 Alternatively, you can just exit the program. Note the Among Us Nick - Discord user links will then be gone.
 
+###### Bot commands
+Other than the commands mentioned under Launching of bot, those commands are available:
+```
+sus!savelinks
+```
+Saves links between discord users and Among Us nicknames for future use. Those will be loaded on the next start.
